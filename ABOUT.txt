@@ -1,0 +1,6 @@
+This is implementation fromt the video:
+- Video name:	ASP.NET Core 3 - IdentityServer4 - Ep.9 Client Credentials (Introduction)
+- By:		Raw Coding
+- URL:		https://www.youtube.com/watch?v=jARHHUsljeo&list=PLOeFnOV9YBa7dnrjpOG6lMpcyd7Wn7E8V&index=11
+
+This is about client_credential flow, which is usefull for api communication.
