@@ -1,0 +1,52 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+namespace MvcClient
+{
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddAuthentication(config =>
+                {
+                    config.DefaultScheme = "Cookie";
+                    config.DefaultChallengeScheme = "oidc";
+                })
+                .AddCookie("Cookie")
+                .AddOpenIdConnect("oidc", config =>
+                {
+                    config.Authority = "https://localhost:5001";
+                    // Identifying the client
+                    config.ClientId = "client_id_mvc";
+                    config.ClientSecret = "client_secret_mvc";
+                    // Indicate to save token in our cookies
+                    config.SaveTokens = true;
+                    // Indicate the authentication flow to use (access token and id token retrieval)
+                    config.ResponseType = "code";
+                });
+
+            services.AddControllersWithViews();
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
+        }
+    }
+}

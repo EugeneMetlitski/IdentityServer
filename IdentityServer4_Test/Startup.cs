@@ -11,6 +11,7 @@ namespace IdentityServer4_Test
         {
             services.AddIdentityServer()
                 .AddInMemoryApiResources(Configuration.GetApis())
+                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
                 .AddInMemoryClients(Configuration.GetClients())
                 // This will generate a certificate for signing token,
                 // instead of secret key, this may be better to remove
