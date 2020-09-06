@@ -38,9 +38,8 @@ namespace IdentityServer4_Test
                     ClientSecrets = { new Secret("client_secret".ToSha256()) },
                     // How is it going to retrieve the access token (flow of access token requests)
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
-
                     // What can this access token be used for
-                    AllowedScopes = { "ApiOne" }
+                    AllowedScopes = { "ApiOne" },
                 },
                 new Client
                 {
@@ -54,7 +53,9 @@ namespace IdentityServer4_Test
                         "ApiTwo",
                         IdentityServer4.IdentityServerConstants.StandardScopes.OpenId, // "openid"
                         IdentityServer4.IdentityServerConstants.StandardScopes.Profile // "profile"
-                    }
+                    },
+                    // Turn off consent form at this point, later will enable it
+                    RequireConsent = false
                 }
             };
     }

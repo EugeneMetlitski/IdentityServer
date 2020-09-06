@@ -1,5 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace IdentityServer4_Test
@@ -19,7 +21,18 @@ namespace IdentityServer4_Test
             //    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}", theme: AnsiConsoleTheme.Literate)
             //    .CreateLogger();
 
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            using (var scope = host.Services.CreateScope())
+            {
+                var userManager = scope.ServiceProvider
+                    .GetRequiredService<UserManager<IdentityUser>>();
+
+                var user = new IdentityUser("bob");
+                userManager.CreateAsync(user, "password").GetAwaiter().GetResult();
+            }
+            
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

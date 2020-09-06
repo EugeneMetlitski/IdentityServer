@@ -1,9 +1,6 @@
 Implemented youtube video:
-- Name:	ASP.NET Core 3 - IdentityServer4 - Ep.10 Authorization Code Flow
-- By:	Raw Coding
-- URL:	https://www.youtube.com/watch?v=8zupoD2pzZY&list=PLOeFnOV9YBa7dnrjpOG6lMpcyd7Wn7E8V&index=12
+- Name:	ASP.NET Core 3 - IdentityServer4 - Ep.11 Identity Login & Register
+- By:	Raw COding
+- URL:	https://www.youtube.com/watch?v=0GAnnCA3u_I&list=PLOeFnOV9YBa7dnrjpOG6lMpcyd7Wn7E8V&index=13
 
-In this iteration, we made new client, and made it go to the identity
-server with the URL to come back to the mvc client, then IdentityServer
-will need to authenticate or redirect to another login page. Authentication
-will be implemented in future iterations.
+Finished the basic implementation of authorization code flow.
