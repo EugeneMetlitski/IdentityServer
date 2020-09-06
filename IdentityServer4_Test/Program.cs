@@ -1,4 +1,5 @@
 using System;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +31,14 @@ namespace IdentityServer4_Test
 
                 var user = new IdentityUser("bob");
                 userManager.CreateAsync(user, "password").GetAwaiter().GetResult();
+                // This claim will be added to identity token
+                userManager.AddClaimAsync(user,
+                    new Claim("rc.grandma", "big.Cookie"))
+                    .GetAwaiter().GetResult();
+                // This claim we will add to access token
+                userManager.AddClaimAsync(user,
+                    new Claim("rc.api.grandma", "big.api.Cookie"))
+                    .GetAwaiter().GetResult();
             }
             
             host.Run();

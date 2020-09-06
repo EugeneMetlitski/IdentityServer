@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,34 @@ namespace MvcClient
                     config.SaveTokens = true;
                     // Indicate the authentication flow to use (access token and id token retrieval)
                     config.ResponseType = "code";
+
+                    // Configure mapping between the user end point to our cookie for claims.
+                    config.ClaimActions.DeleteClaim("amr"); // remove amr from cookie session
+                    config.ClaimActions.MapUniqueJsonKey("RawCoding.Grandma", "rc.grandma");
+
+                    // After we get the id_token, make another round trip to get
+                    // our claims. This will make the id_token smaller and is why
+                    // the endpoint for getting claims exists. If don't want to
+                    // make another round trip, set the IdentityServer to inject
+                    // all the claims into the id_token.
+                    config.GetClaimsFromUserInfoEndpoint = true;
+
+                    // Clear the scope, so that we will not ask for profile scope,
+                    // which is optional by openid but is included in Microsoft
+                    // Identity library (it bloats the cookies).
+                    config.Scope.Clear();
+                    // Ask for openid scope which is mandatory in openid specs.
+                    config.Scope.Add("openid");
+                    // Request IdentityServer for custom scope
+                    config.Scope.Add("rc.scope");
+
+                    // Added this when calling ApiOne after getting token
+                    config.Scope.Add("ApiOne");
+                    config.Scope.Add("ApiTwo");
                 });
+
+            // This is for being able to call ApiOne
+            services.AddHttpClient();
 
             services.AddControllersWithViews();
         }

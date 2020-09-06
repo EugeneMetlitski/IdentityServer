@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using IdentityModel;
 using IdentityServer4.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityServer4_Test
 {
@@ -13,20 +14,33 @@ namespace IdentityServer4_Test
 
         // Register the scopes that can belong to a user
         public static IEnumerable<IdentityResource> GetIdentityResources() =>
+            // NB:IdentityResources is the information about the user
+            // that's gonna go into the id_token.
             new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
                 // Profile resource bloats the access_token, but is required if
                 // client is using .Net OpenIdConnect NugetPackage to connect
                 // to the IdentityServer.
-                new IdentityResources.Profile()
+                //new IdentityResources.Profile(),
+                // Declare that this is a possible scope that can be requested
+                // with these user claims. Let IdentityServer4 be aware of this
+                // scope and that it may contain these user claims.
+                new IdentityResource
+                {
+                    Name = "rc.scope",
+                    UserClaims =
+                    {
+                        "rc.grandma"
+                    }
+                }
             };
 
         public static IEnumerable<ApiResource> GetApis() =>
             new List<ApiResource>
             {
                 new ApiResource("ApiOne"),
-                new ApiResource("ApiTwo"),
+                new ApiResource("ApiTwo", new string[] { "rc.api.grandma" }),
             };
 
         public static IEnumerable<Client> GetClients() =>
@@ -52,8 +66,13 @@ namespace IdentityServer4_Test
                         "ApiOne",
                         "ApiTwo",
                         IdentityServer4.IdentityServerConstants.StandardScopes.OpenId, // "openid"
-                        IdentityServer4.IdentityServerConstants.StandardScopes.Profile // "profile"
+                        IdentityServer4.IdentityServerConstants.StandardScopes.Profile, // "profile"
+                        "rc.scope"
                     },
+
+                    // Tell IdentityServer4 to load all the claims into id token
+                    //AlwaysIncludeUserClaimsInIdToken = true,
+
                     // Turn off consent form at this point, later will enable it
                     RequireConsent = false
                 }
