@@ -1,4 +1,4 @@
-﻿namespace IdentityServer4_Test.Controllers
+﻿namespace IdentityServer.Controllers
 {
     public class LoginViewModel
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityServer4_Test.Data
+namespace IdentityServer.Data
 {
     // IdentityDbContext contains all the user tables
     public class AppDbContext : IdentityDbContext

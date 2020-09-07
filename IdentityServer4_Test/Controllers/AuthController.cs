@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace IdentityServer4_Test.Controllers
+namespace IdentityServer.Controllers
 {
     public class AuthController : Controller
     {

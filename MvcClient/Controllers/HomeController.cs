@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MvcClient.Controllers
+namespace Client.Controllers
 {
     public class HomeController : Controller
     {
