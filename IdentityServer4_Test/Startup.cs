@@ -1,4 +1,7 @@
+using IdentityServer.Configurations;
 using IdentityServer.Data;
+using IdentityServer.Models;
+using IdentityServer4;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityServer
 {
@@ -31,14 +35,33 @@ namespace IdentityServer
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthentication()
+                .AddOpenIdConnect("oidc", "MYP Provider", options =>
+                {
+                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                    options.SignOutScheme = IdentityServerConstants.SignoutScheme;
+                    options.SaveTokens = true;
+
+                    options.Authority = "https://localhost:5001/";
+                    options.ClientId = "interactive.confidential";
+                    options.ClientSecret = "secret";
+                    options.ResponseType = "code";
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        NameClaimType = "name",
+                        RoleClaimType = "role"
+                    };
+                });
+
             services.ConfigureApplicationCookie(config =>
             {
                 config.Cookie.Name = "IdentityServer.Cookie";
                 config.LoginPath = "/Auth/Login";
             });
 
-            //UseUnMemoryDb(services); // use in memory data
-            UseDb(services); // use the database
+            UseInMemoryDb(services); // use in memory data
+            //UseDb(services); // use the database
 
             services.AddControllersWithViews();
         }
@@ -53,6 +76,7 @@ namespace IdentityServer
             app.UseRouting();
 
             app.UseIdentityServer();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -60,22 +84,24 @@ namespace IdentityServer
             });
         }
 
-        private void UseUnMemoryDb(IServiceCollection services)
+
+        #region helper-functions
+        
+        private void UseInMemoryDb(IServiceCollection services)
         {
             services.AddDbContext<AppDbContext>(config =>
             {
                 config.UseInMemoryDatabase("Memory");
             });
 
-            services.AddIdentityServer()
-                // AddAspNetIdentity helps IdentityServer4 understand the Microsoft's
-                // Identity model for the user and how to query for this model. The
-                // AddIdentity function above is from Microsoft's Identity package.
-                .AddAspNetIdentity<IdentityUser>()
-                .AddInMemoryApiResources(Configuration.GetApis())
-                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-                .AddInMemoryClients(Configuration.GetClients())
-                .AddDeveloperSigningCredential();
+            var builder = services.AddIdentityServer()
+                .AddTestUsers(Models.TestUsers.Users)
+                //.AddAspNetIdentity<IdentityUser>()
+                .AddInMemoryApiScopes(Configuration.ApiScopes)
+                .AddInMemoryIdentityResources(Configuration.IdentityResources)
+                .AddInMemoryClients(Configuration.Clients);
+
+            builder.AddDeveloperSigningCredential();
         }
 
         private void UseDb(IServiceCollection services)
@@ -88,8 +114,9 @@ namespace IdentityServer
                 config.UseSqlServer(dbConnectionString);
             });
 
-            services.AddIdentityServer()
-                .AddAspNetIdentity<IdentityUser>()
+            var builder = services.AddIdentityServer()
+                .AddTestUsers(Models.TestUsers.Users)
+                //.AddAspNetIdentity<IdentityUser>()
 
                 // Get the clients, api, identity resources... The static configuration information.
                 .AddConfigurationStore(options =>
@@ -104,9 +131,11 @@ namespace IdentityServer
                     options.ConfigureDbContext = b => b.UseSqlServer(
                         dbConnectionString,
                         sql => sql.MigrationsAssembly(migrationAssembly));
-                })
+                });
 
-                .AddDeveloperSigningCredential();
+            builder.AddDeveloperSigningCredential();
         }
+
+        #endregion
     }
 }

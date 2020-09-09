@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using IdentityModel;
 using IdentityServer4.Models;
 
-namespace IdentityServer.Data
+namespace IdentityServer.Configurations
 {
     public static class Configuration
     {
-        public static IEnumerable<IdentityResource> GetIdentityResources() =>
+        public static IEnumerable<IdentityResource> IdentityResources =>
 
             new List<IdentityResource>
             {
@@ -23,19 +22,19 @@ namespace IdentityServer.Data
                 }
             };
 
-        public static IEnumerable<ApiResource> GetApis() =>
-            new List<ApiResource>
+        public static IEnumerable<ApiScope> ApiScopes =>
+            new List<ApiScope>
             {
-                new ApiResource("Api", new string[] { "rc.api.grandma" }),
+                new ApiScope("Api", "rc.api.grandma")
             };
 
-        public static IEnumerable<Client> GetClients() =>
+        public static IEnumerable<Client> Clients =>
             new List<Client>
             {
                 new Client
                 {
                     ClientId = "client_1",
-                    ClientSecrets = { new Secret("secret".ToSha256()) },
+                    ClientSecrets = { new Secret("secret".Sha256()) },
                     AllowedGrantTypes = GrantTypes.Code,
                     RedirectUris = { "https://localhost:44348/signin-oidc" },
                     AllowedScopes =
@@ -51,16 +50,7 @@ namespace IdentityServer.Data
 
                     // Turn off consent form at this point, later will enable it
                     RequireConsent = false
-                },
-                //new Client
-                //{
-                //    ClientId = "client_id",
-                //    ClientSecrets = { new Secret("client_secret".ToSha256()) },
-                //    // How is it going to retrieve the access token (flow of access token requests)
-                //    AllowedGrantTypes = GrantTypes.ClientCredentials,
-                //    // What can this access token be used for
-                //    AllowedScopes = { "Api" },
-                //},
+                }
             };
     }
 }

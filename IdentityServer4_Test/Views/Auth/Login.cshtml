@@ -1,4 +1,4 @@
-﻿@model IdentityServer.Controllers.LoginViewModel
+﻿@model IdentityServer.Models.LoginViewModel
 
 <form asp-controller="Auth" asp-action="Login" method="post">
     <input type="hidden" asp-for="ReturnUrl" />
@@ -14,9 +14,20 @@
         <button type="submit">Sign In</button>
     </div>
 </form>
+
 <div>
+    <a
+        asp-controller="External"
+        asp-action="Challenge"
+        asp-route-scheme="oidc"
+        asp-route-returnUrl="/diagnostics">>
+            Register with MYP
+    </a>
+</div>
+
+@*<div>
     <a asp-controller="Auth" asp-action="Register"
        asp-route-returnUrl="@Model.ReturnUrl">
         Register
     </a>
-</div>
+</div>*@

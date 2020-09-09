@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using IdentityServer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,34 +22,30 @@ namespace IdentityServer.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl)
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel vm)
+        public async Task<IActionResult> Login(LoginViewModel vm, string returnUrl)
         {
-            // check if the model is valid
-
             // isPersistent: is is persistent cookie which is going to persist in the browser,
             // persistent cookie stays in the browser after it's closed, otherwise it gets deleted
             // lockoutOnFailure: configure the amount of attempts user is allowed to login
             var result = await _signInManager.PasswordSignInAsync(vm.Username, vm.Password, false, false);
-
+            
             if (result.Succeeded)
             {
                 // Once we have signed in, the cookie is delt out, so we want to redirect back to returnUrl
-                return Redirect(vm.ReturnUrl);
                 // This will redirect to a consent screen, however at this point consent screen has been
                 // disabled in the Configuration.cs file for the MvcClient
+                return Redirect(vm.ReturnUrl);
             }
-            //else if (result.IsLockedOut)
-            //{
-                
-            //}
 
             return View();
         }
 
+        #region register
+        
         [HttpGet]
         public IActionResult Register(string returnUrl)
         {
@@ -77,5 +74,7 @@ namespace IdentityServer.Controllers
 
             return View();
         }
+
+        #endregion
     }
 }

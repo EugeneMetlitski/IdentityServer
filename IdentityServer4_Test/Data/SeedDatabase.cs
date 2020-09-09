@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.Security.Claims;
+using IdentityServer.Configurations;
+using IdentityServer.Models;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Identity;
@@ -37,7 +39,7 @@ namespace IdentityServer.Data
 
             if (!context.Clients.Any())
             {
-                foreach (var client in Configuration.GetClients())
+                foreach (var client in Configuration.Clients)
                 {
                     context.Clients.Add(client.ToEntity());
                 }
@@ -46,7 +48,7 @@ namespace IdentityServer.Data
 
             if (!context.IdentityResources.Any())
             {
-                foreach (var resource in Configuration.GetIdentityResources())
+                foreach (var resource in Configuration.IdentityResources)
                 {
                     context.IdentityResources.Add(resource.ToEntity());
                 }
@@ -55,9 +57,9 @@ namespace IdentityServer.Data
 
             if (!context.ApiResources.Any())
             {
-                foreach (var resource in Configuration.GetApis())
+                foreach (var resource in Configuration.ApiScopes)
                 {
-                    context.ApiResources.Add(resource.ToEntity());
+                    context.ApiScopes.Add(resource.ToEntity());
                 }
                 context.SaveChanges();
             }

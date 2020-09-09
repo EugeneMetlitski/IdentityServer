@@ -17,7 +17,7 @@ namespace IdentityServer
             using (var scope = host.Services.CreateScope())
             {
                 SeedDatabase.SetUser(scope);
-                SeedDatabase.SeedDb(scope);
+                //SeedDatabase.SeedDb(scope);
             }
 
             host.Run();
